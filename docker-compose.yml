@@ -1,0 +1,47 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cyberguard_api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    # Persist logs to host workspace
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      # Placeholder secrets for object storage integration
+      - SPACES_KEY=your_do_spaces_key
+      - SPACES_SECRET=your_do_spaces_secret
+      - SPACES_URL=your_do_spaces_url
+      - SPACES_BUCKET=your_do_spaces_bucket
+      # Inference hardening config
+      - ENABLE_CONFIDENCE_CALIBRATION=true
+      - PERSIST_CALIBRATOR=false
+      - CALIBRATION_DATA_PATH=/app/data/processed/processed_cyber_data.csv
+      - CALIBRATOR_PATH=/app/models/probability_calibrator.joblib
+      - DEFAULT_SENSITIVITY=balanced
+      - THRESHOLD_LOW=0.75
+      - THRESHOLD_BALANCED=0.60
+      - THRESHOLD_HIGH=0.45
+      - THRESHOLD_UNCERTAINTY_MARGIN=0.05
+      - AUTO_SENSITIVITY_SMS=low
+      - AUTO_SENSITIVITY_WHATSAPP=balanced
+      - AUTO_SENSITIVITY_EMAIL=balanced
+      - THRESHOLD_OFFSET_SMS=0.00
+      - THRESHOLD_OFFSET_WHATSAPP=0.00
+      - THRESHOLD_OFFSET_EMAIL=0.00
+      - CHANNEL_PRIOR_WEIGHT=1.00
+      - CHANNEL_PRIOR_MIN_SAMPLE=200
+      - CHANNEL_PRIOR_SMOOTHING=200.0
+      - CHANNEL_PRIOR_MAX_ODDS_RATIO=3.0
+
+    # Keep container healthy when liveness endpoint is reachable
+    healthcheck:
+      # Use Python stdlib HTTP client to avoid extra curl dependency
+      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health/live').getcode() == 200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
