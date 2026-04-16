@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CyberGuard-ID | Dashboard Simulasi Keamanan Siber</title>
+    <meta
+      name="description"
+      content="Dashboard interaktif untuk simulasi deteksi phishing dan edukasi keamanan siber masyarakat."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/dashboard.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a" aria-hidden="true"></div>
+    <div class="ambient ambient-b" aria-hidden="true"></div>
+
+    <header class="hero reveal">
+      <p class="eyebrow">Pusat Simulasi & Edukasi Publik</p>
+      <h1>CyberGuard-ID Interactive Web Dashboard</h1>
+      <p class="hero-copy">
+        Belajar mengenali phishing lewat simulasi real-time, penjelasan AI yang transparan,
+        dan panduan tindakan praktis saat ancaman muncul.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel simulator reveal">
+        <div class="panel-head">
+          <h2>Simulator Pesan</h2>
+          <span class="panel-tag">Live API</span>
+        </div>
+
+        <label for="inputText">Teks pesan</label>
+        <textarea
+          id="inputText"
+          rows="6"
+          placeholder="Contoh: Akun Anda diblokir, segera verifikasi di bit.ly/cek-akun"
+        ></textarea>
+
+        <div class="controls">
+          <div>
+            <label for="sourceSelect">Sumber</label>
+            <select id="sourceSelect">
+              <option>SMS</option>
+              <option>WhatsApp</option>
+              <option>Email</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div>
+            <label for="sensitivitySelect">Sensitivitas</label>
+            <select id="sensitivitySelect">
+              <option value="balanced" selected>Balanced</option>
+              <option value="high">High (lebih ketat)</option>
+              <option value="low">Low (lebih longgar)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="scenario-row">
+          <button class="chip" data-text="PERINGATAN! Akun Anda diblokir. Verifikasi segera di bit.ly/cek-akun untuk menghindari penutupan permanen.">
+            Skenario: Ancaman akun
+          </button>
+          <button class="chip" data-text="Halo, agenda rapat dipindah ke jam 15.00 di ruang utama. Mohon konfirmasi hadir.">
+            Skenario: Info internal
+          </button>
+          <button class="chip" data-text="Selamat! Anda dapat hadiah pajak. Isi data dan OTP sekarang di tinyurl.com/hadiahcepat.">
+            Skenario: Hadiah palsu
+          </button>
+        </div>
+
+        <div class="action-row">
+          <button id="analyzeBtn" class="btn btn-primary">Analisis Pesan</button>
+          <button id="clearBtn" class="btn btn-ghost">Bersihkan</button>
+        </div>
+
+        <div id="apiError" class="alert" hidden></div>
+
+        <article id="resultCard" class="result" hidden>
+          <div class="result-head">
+            <p id="resultLabel" class="risk-label">-</p>
+            <p id="resultScore" class="risk-score">0%</p>
+          </div>
+
+          <div class="progress-wrap" aria-label="Skor risiko">
+            <div id="confidenceBar" class="progress-bar"></div>
+          </div>
+
+          <p id="resultMessage" class="result-message"></p>
+          <p id="resultMeta" class="result-meta"></p>
+
+          <h3>Alasan Utama</h3>
+          <ul id="reasoningList"></ul>
+
+          <h3>Kontributor Fitur</h3>
+          <div id="contributors" class="contributors"></div>
+
+          <h3>Mitigasi</h3>
+          <p id="mitigationTip" class="tip"></p>
+        </article>
+      </section>
+
+      <section class="panel education reveal">
+        <div class="panel-head">
+          <h2>Panduan Edukasi</h2>
+          <span class="panel-tag">Awareness Toolkit</span>
+        </div>
+
+        <h3>Checklist Red Flags</h3>
+        <ul id="flagChecklist" class="flag-list">
+          <li data-flag="hasLink">Ada tautan pendek / domain mencurigakan</li>
+          <li data-flag="hasUrgency">Bahasa mendesak atau ancaman penalti</li>
+          <li data-flag="asksCredential">Meminta OTP, PIN, password, atau data KTP</li>
+          <li data-flag="tooGood">Iming-iming hadiah atau cashback berlebihan</li>
+        </ul>
+
+        <h3>Respon 3 Langkah</h3>
+        <ol class="steps">
+          <li>Hentikan interaksi. Jangan klik link dan jangan balas.</li>
+          <li>Verifikasi lewat kanal resmi (nomor CS resmi, aplikasi resmi, situs resmi).</li>
+          <li>Laporkan dan dokumentasikan bukti pesan untuk edukasi keluarga/komunitas.</li>
+        </ol>
+
+        <div class="quiz">
+          <p class="quiz-title">Mini Kuis: tindakan pertama saat diminta OTP adalah...</p>
+          <label><input type="radio" name="quiz" value="wrong" /> Kirim OTP agar akun aman</label>
+          <label><input type="radio" name="quiz" value="right" /> Stop, verifikasi via kanal resmi</label>
+          <label><input type="radio" name="quiz" value="wrong" /> Forward ke grup dan tunggu jawaban</label>
+          <button id="checkQuizBtn" class="btn btn-secondary">Periksa Jawaban</button>
+          <p id="quizFeedback" class="quiz-feedback"></p>
+        </div>
+      </section>
+
+      <section class="panel session reveal">
+        <div class="panel-head">
+          <h2>Statistik Sesi</h2>
+          <span class="panel-tag">Edukasi Interaktif</span>
+        </div>
+
+        <div class="stats">
+          <article>
+            <p class="metric-label">Total Simulasi</p>
+            <p id="metricRuns" class="metric-value">0</p>
+          </article>
+          <article>
+            <p class="metric-label">Rata-rata Risiko</p>
+            <p id="metricAvg" class="metric-value">0%</p>
+          </article>
+          <article>
+            <p class="metric-label">Kasus Risiko Tinggi</p>
+            <p id="metricHigh" class="metric-value">0</p>
+          </article>
+        </div>
+
+        <p class="footnote">
+          Dashboard ini ditujukan untuk simulasi edukatif publik. Tetap lakukan verifikasi manual
+          untuk keputusan keamanan yang kritis.
+        </p>
+      </section>
+    </main>
+
+    <script src="/static/dashboard.js"></script>
+  </body>
+</html>
