@@ -13,3 +13,4 @@ build/
 .env
 frontend-dashboard/node_modules/
 frontend-dashboard/dist/
+agent-response.md
