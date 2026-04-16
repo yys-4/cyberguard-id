@@ -1,0 +1,15 @@
+.venv/
+pycache/
+.pytest_cache/
+*.py[cod]
+logs/
+*.log
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.env
+dist/
+build/
+.env
+frontend-dashboard/node_modules/
+frontend-dashboard/dist/
