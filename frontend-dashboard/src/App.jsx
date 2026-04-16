@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
+const IS_DEVELOPMENT = import.meta.env.DEV;
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || (IS_DEVELOPMENT ? "http://localhost:8000" : "")
+).replace(/\/$/, "");
+const PREDICT_ENDPOINT = `${API_BASE_URL}/predict-v2`;
 
 const PRESET_SCENARIOS = [
   {
@@ -137,7 +141,7 @@ export default function App() {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/predict-v2`, {
+      const response = await fetch(PREDICT_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -190,14 +194,22 @@ export default function App() {
       <div className="glow glow-right" aria-hidden="true" />
 
       <header className="hero-card reveal">
-        <p className="eyebrow">Frontend Studio Terpisah</p>
-        <h1>CyberGuard-ID Community Simulation Hub</h1>
+        <p className="eyebrow">Pusat Simulasi & Edukasi Publik</p>
+        <h1>CyberGuard-ID</h1>
         <p>
-          Paket React ini dipisahkan dari backend FastAPI agar tim Frontend/UI-UX bisa iterasi cepat pada desain,
-          konten edukasi, dan flow interaksi tanpa mengganggu service model inference.
+          CyberGuard-ID membantu masyarakat mengenali pola phishing di SMS, WhatsApp, dan Email melalui simulasi
+          pesan realistis, skor risiko yang mudah dipahami, serta panduan mitigasi yang dapat langsung diterapkan.
         </p>
         <div className="api-pill">
-          API Endpoint: <span>{API_BASE_URL}/predict-v2</span>
+          {IS_DEVELOPMENT ? (
+            <>
+              Endpoint Dev: <span>{PREDICT_ENDPOINT}</span>
+            </>
+          ) : (
+            <>
+              Status Layanan: <span>Analisis Aktif</span>
+            </>
+          )}
         </div>
       </header>
 
