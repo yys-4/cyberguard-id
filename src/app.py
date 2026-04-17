@@ -10,6 +10,7 @@ import os
 import logging
 
 from src.inference_engine import HybridThreatAnalyzer
+from src.security import BlobStorageManager, KeyVaultSecretProvider, PredictionAuditLogger, SecuritySettings
 
 app = FastAPI(
     title="CyberGuard-ID Phishing Detection API",
@@ -31,14 +32,36 @@ app.add_middleware(
 LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 logging.basicConfig(
-    filename=os.path.join(LOG_DIR, "phishing_attempts.log"),
     level=logging.INFO,
     format="%(asctime)s - [%(levelname)s] - %(message)s"
 )
 
-MODEL_PATH = os.path.join("models", "xgboost_no_platform.joblib")
+logger = logging.getLogger("cyberguard.api")
+
+security_settings = SecuritySettings.from_env()
+secret_provider = KeyVaultSecretProvider.from_settings(security_settings, logger=logger)
+loaded_secret_bindings = secret_provider.load_environment_secrets(security_settings.key_vault_secret_env_map)
+
+if loaded_secret_bindings:
+    logger.info(
+        "Loaded %d runtime secret(s) from Key Vault into process environment.",
+        len(loaded_secret_bindings),
+    )
+
+blob_storage = BlobStorageManager.from_settings(
+    security_settings,
+    secret_provider=secret_provider,
+    logger=logger,
+)
+prediction_audit_logger = PredictionAuditLogger(
+    settings=security_settings,
+    blob_storage=blob_storage,
+    logger=logger,
+)
+
+MODEL_PATH = os.getenv("MODEL_PATH", os.path.join("models", "xgboost_no_platform.joblib"))
 model = joblib.load(MODEL_PATH)
-hybrid_analyzer = HybridThreatAnalyzer(MODEL_PATH, logger=logging.getLogger(__name__))
+hybrid_analyzer = HybridThreatAnalyzer(MODEL_PATH, logger=logger)
 
 if os.path.isdir(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -140,6 +163,27 @@ def extract_features(text: str):
         "contains_urgency": [has_urgency]
     }
 
+
+def audit_prediction_event(
+    endpoint: str,
+    text: str,
+    source: Optional[str],
+    is_phishing: bool,
+    confidence: float,
+    xai_method: Optional[str],
+) -> None:
+    try:
+        prediction_audit_logger.log_prediction(
+            endpoint=endpoint,
+            text=text,
+            source=source,
+            is_phishing=is_phishing,
+            confidence=confidence,
+            xai_method=xai_method,
+        )
+    except Exception as exc:  # pragma: no cover - defensive guard
+        logger.warning("Prediction audit logging failed: %s", exc)
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to CyberGuard-ID Phishing Detection API"}
@@ -187,12 +231,23 @@ def predict_phishing(request: PredictionRequest):
     else:
         mitigation_tip = "Pesan terlihat aman, namun tetaplah waspada dan jangan berikan informasi pribadi jika tidak diperlukan."
 
+    confidence_percent = round(confidence * 100, 2)
+
+    audit_prediction_event(
+        endpoint="/predict",
+        text=request.text,
+        source=None,
+        is_phishing=is_phishing,
+        confidence=confidence_percent,
+        xai_method="model_probability",
+    )
+
     if is_phishing:
-        logging.info(f"PHISHING DETECTED | Confidence: {confidence:.2f} | Text: {request.text.strip()}")
+        logger.info("PHISHING DETECTED | Confidence: %.2f | Text: %s", confidence_percent, request.text.strip())
 
     return PredictionResponse(
         is_phishing=is_phishing,
-        confidence=round(confidence * 100, 2),
+        confidence=confidence_percent,
         message=message,
         reasoning=reasoning,
         mitigation_tip=mitigation_tip
@@ -212,11 +267,20 @@ def predict_phishing_v2(request: PredictionRequestV2):
             top_k=5,
         )
     except Exception as exc:
-        logging.exception("Analisis /predict-v2 gagal: %s", exc)
+        logger.exception("Analisis /predict-v2 gagal: %s", exc)
         raise HTTPException(status_code=500, detail="Terjadi kegagalan internal saat menganalisis pesan.") from exc
 
+    audit_prediction_event(
+        endpoint="/predict-v2",
+        text=request.text,
+        source=request.source,
+        is_phishing=result["is_phishing"],
+        confidence=result["confidence"],
+        xai_method=result["xai_method"],
+    )
+
     if result["is_phishing"]:
-        logging.info(
+        logger.info(
             "PHISHING DETECTED V2 | ThreatProb: %.2f | XAI: %s | Text: %s",
             result["confidence"],
             result["xai_method"],

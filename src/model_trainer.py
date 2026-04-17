@@ -11,6 +11,9 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix, classification_report
 from xgboost import XGBClassifier
 import os
+import logging
+
+from src.security import BlobStorageManager, KeyVaultSecretProvider, SecuritySettings
 
 # Configs
 DATA_PATH = "data/processed/processed_cyber_data.csv"
@@ -19,8 +22,30 @@ REPORT_DIR = "reports"
 os.makedirs(MODEL_DIR, exist_ok=True)
 os.makedirs(REPORT_DIR, exist_ok=True)
 
+logger = logging.getLogger("cyberguard.training")
+security_settings = SecuritySettings.from_env()
+secret_provider = KeyVaultSecretProvider.from_settings(security_settings, logger=logger)
+blob_storage = BlobStorageManager.from_settings(security_settings, secret_provider=secret_provider, logger=logger)
+
+
+def maybe_download_blob_input(local_path, blob_path):
+    if os.path.exists(local_path):
+        return
+    if not blob_storage.enabled:
+        return
+    if blob_storage.download_file(blob_path=blob_path, local_path=local_path, overwrite=False):
+        print(f"Downloaded missing input from blob path: {blob_path}")
+
+
+def maybe_upload_blob_output(local_path, blob_path):
+    if not blob_storage.enabled:
+        return
+    if blob_storage.upload_file(local_path=local_path, blob_path=blob_path, overwrite=True):
+        print(f"Uploaded training artifact to blob path: {blob_path}")
+
 def main():
     print("Loading data...")
+    maybe_download_blob_input(DATA_PATH, security_settings.processed_blob_path("datasets/processed_cyber_data.csv"))
     df = pd.read_csv(DATA_PATH)
     # Ensure no entirely null rows for text or label
     df = df.dropna(subset=['processed_text', 'label'])
@@ -106,6 +131,10 @@ def main():
     plt.savefig(os.path.join(REPORT_DIR, "xgboost_confusion_matrix.png"), dpi=300)
     plt.close()
     print(f"Confusion Matrix disimpan ke: {REPORT_DIR}/xgboost_confusion_matrix.png")
+    maybe_upload_blob_output(
+        local_path=os.path.join(REPORT_DIR, "xgboost_confusion_matrix.png"),
+        blob_path=security_settings.processed_blob_path("reports/xgboost_confusion_matrix.png"),
+    )
     
     # 4. Feature Importance Visualization (Explainability)
     # Extract feature names from preprocessing steps
@@ -131,11 +160,19 @@ def main():
     plt.savefig(os.path.join(REPORT_DIR, "top10_feature_importances_xgboost.png"), dpi=300)
     plt.close()
     print(f"Feature Importance Chart disimpan ke: {REPORT_DIR}/top10_feature_importances_xgboost.png")
+    maybe_upload_blob_output(
+        local_path=os.path.join(REPORT_DIR, "top10_feature_importances_xgboost.png"),
+        blob_path=security_settings.processed_blob_path("reports/top10_feature_importances_xgboost.png"),
+    )
     
     # 5. Model Export
     model_path = os.path.join(MODEL_DIR, "xgboost_baseline.joblib")
     joblib.dump(pipeline, model_path)
     print(f"\nModel Exported successfully: Deployment-ready model saved as {model_path}")
+    maybe_upload_blob_output(
+        local_path=model_path,
+        blob_path=security_settings.processed_blob_path("models/xgboost_baseline.joblib"),
+    )
 
 if __name__ == "__main__":
     main()

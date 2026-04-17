@@ -2,10 +2,39 @@ import pandas as pd
 import re
 import matplotlib.pyplot as plt
 import os
+import logging
+
+from src.security import BlobStorageManager, KeyVaultSecretProvider, SecuritySettings
+
+logger = logging.getLogger("cyberguard.preprocessing")
+security_settings = SecuritySettings.from_env()
+secret_provider = KeyVaultSecretProvider.from_settings(security_settings, logger=logger)
+blob_storage = BlobStorageManager.from_settings(security_settings, secret_provider=secret_provider, logger=logger)
+
+
+def maybe_download_blob_input(local_path, blob_path):
+    if os.path.exists(local_path):
+        return
+    if not blob_storage.enabled:
+        return
+
+    if blob_storage.download_file(blob_path=blob_path, local_path=local_path, overwrite=False):
+        print(f"Downloaded missing dataset from blob path: {blob_path}")
+
+
+def maybe_upload_blob_output(local_path, blob_path):
+    if not blob_storage.enabled:
+        return
+
+    if blob_storage.upload_file(local_path=local_path, blob_path=blob_path, overwrite=True):
+        print(f"Uploaded artifact to blob path: {blob_path}")
 
 # 1. Load Data
 db_raw_path = "data/raw/sms_spam_indo.csv"
 db_syn_path = "data/external/synthetic_phishing_data.csv"
+
+maybe_download_blob_input(db_raw_path, security_settings.raw_blob_path("datasets/sms_spam_indo.csv"))
+maybe_download_blob_input(db_syn_path, security_settings.raw_blob_path("datasets/synthetic_phishing_data.csv"))
 
 # Kaggle dataset
 df_raw = pd.read_csv(db_raw_path)
@@ -32,6 +61,8 @@ news_files = [
 news_dfs = []
 for file, platform_name in news_files:
     file_path = os.path.join(news_dir, file)
+    if not os.path.exists(file_path):
+        maybe_download_blob_input(file_path, security_settings.raw_blob_path(f"datasets/news/{file}"))
     if os.path.exists(file_path):
         df_news = pd.read_csv(file_path)
         # Using clean_text or narasi. fallback to judul if needed
@@ -106,6 +137,10 @@ for bar in bars:
 os.makedirs('reports', exist_ok=True)
 plt.savefig('reports/class_distribution.png')
 print("Saved visualization to reports/class_distribution.png")
+maybe_upload_blob_output(
+    local_path='reports/class_distribution.png',
+    blob_path=security_settings.processed_blob_path('reports/class_distribution.png'),
+)
 
 # 6. Output to CSV
 os.makedirs('data/processed', exist_ok=True)
@@ -113,6 +148,10 @@ output_path = 'data/processed/processed_cyber_data.csv'
 final_cols = ['processed_text', 'label', 'platform', 'has_dangerous_link', 'contains_urgency']
 df_combined[final_cols].to_csv(output_path, index=False, encoding='utf-8')
 print(f"Processed dataset saved to {output_path}")
+maybe_upload_blob_output(
+    local_path=output_path,
+    blob_path=security_settings.processed_blob_path('datasets/processed_cyber_data.csv'),
+)
 
 print("\n--- Top 5 Processed Rows ---")
 print(df_combined[final_cols].head())

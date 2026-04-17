@@ -9,3 +9,6 @@ uvicorn
 pydantic
 pytest
 httpx
+azure-identity
+azure-keyvault-secrets
+azure-storage-blob

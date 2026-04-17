@@ -92,6 +92,13 @@ Catatan:
 - Pastikan backend aktif di `http://localhost:8000`.
 - Set `VITE_API_BASE_URL` di file `.env` frontend.
 
+## Deploy Ke Azure
+
+Panduan deploy awal ke Azure tersedia di:
+
+- `docs/azure-deployment-guide.md`
+- `docs/azure-security-mlops-guide.md`
+
 ## Dev Workflow Tanpa Bentrok Port
 
 ### Jalankan Backend + Frontend Sekaligus

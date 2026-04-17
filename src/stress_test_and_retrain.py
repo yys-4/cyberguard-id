@@ -8,11 +8,35 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 from xgboost import XGBClassifier
 import os
+import logging
+
+from src.security import BlobStorageManager, KeyVaultSecretProvider, SecuritySettings
 
 DATA_PATH = "data/processed/processed_cyber_data.csv"
 MODEL_DIR = "models"
 OLD_MODEL_PATH = os.path.join(MODEL_DIR, "xgboost_baseline.joblib")
 NEW_MODEL_PATH = os.path.join(MODEL_DIR, "xgboost_no_platform.joblib")
+
+logger = logging.getLogger("cyberguard.retrain")
+security_settings = SecuritySettings.from_env()
+secret_provider = KeyVaultSecretProvider.from_settings(security_settings, logger=logger)
+blob_storage = BlobStorageManager.from_settings(security_settings, secret_provider=secret_provider, logger=logger)
+
+
+def maybe_download_blob_input(local_path, blob_path):
+    if os.path.exists(local_path):
+        return
+    if not blob_storage.enabled:
+        return
+    if blob_storage.download_file(blob_path=blob_path, local_path=local_path, overwrite=False):
+        print(f"Downloaded missing input from blob path: {blob_path}")
+
+
+def maybe_upload_blob_output(local_path, blob_path):
+    if not blob_storage.enabled:
+        return
+    if blob_storage.upload_file(local_path=local_path, blob_path=blob_path, overwrite=True):
+        print(f"Uploaded retrained model to blob path: {blob_path}")
 
 # 10 Phishing Texts for Stress Test
 stress_test_data = [
@@ -36,6 +60,7 @@ def map_features(text):
 
 def main():
     print("=== TAHAP 1: STRESS TEST MODEL LAMA (dengan asumsi platform = SMS) ===")
+    maybe_download_blob_input(OLD_MODEL_PATH, security_settings.processed_blob_path("models/xgboost_baseline.joblib"))
     old_model = joblib.load(OLD_MODEL_PATH)
     
     test_rows = []
@@ -54,6 +79,7 @@ def main():
     print(f"Akurasi Stress Test (Model Lama): {sum(preds)}/10 Phishing terdeteksi.\n")
 
     print("=== TAHAP 2: RETRAIN TANPA FITUR PLATFORM ===")
+    maybe_download_blob_input(DATA_PATH, security_settings.processed_blob_path("datasets/processed_cyber_data.csv"))
     df = pd.read_csv(DATA_PATH)
     df = df.dropna(subset=['processed_text', 'label'])
     df['processed_text'] = df['processed_text'].fillna('')
@@ -105,6 +131,7 @@ def main():
     if f1 > 0.90:
         print(f"\nModel stabil (F1 > 0.90) tanpa fitur platform. Menyimpan model ke {NEW_MODEL_PATH}...")
         joblib.dump(pipeline, NEW_MODEL_PATH)
+        maybe_upload_blob_output(NEW_MODEL_PATH, security_settings.processed_blob_path("models/xgboost_no_platform.joblib"))
         
         # Stress test the new model
         print("\n=== Menguji 10 Teks Stress Test ke Model Baru ===")

@@ -1,6 +1,11 @@
 import pandas as pd
 import random
 import os
+import logging
+
+from src.security import BlobStorageManager, KeyVaultSecretProvider, SecuritySettings
+
+logger = logging.getLogger("cyberguard.synthetic")
 
 # Set seed for reproducibility
 random.seed(42)
@@ -112,3 +117,21 @@ if not os.path.exists(ensure_dir):
 
 df.to_csv(output_path, index=False, encoding='utf-8')
 print(f"Successfully created {len(df)} synthetic samples at {output_path}")
+
+
+def upload_synthetic_dataset(local_path: str) -> None:
+    settings = SecuritySettings.from_env()
+    secret_provider = KeyVaultSecretProvider.from_settings(settings, logger=logger)
+    blob_storage = BlobStorageManager.from_settings(settings, secret_provider=secret_provider, logger=logger)
+
+    if not blob_storage.enabled:
+        print("Blob storage is not configured. Synthetic dataset is stored locally only.")
+        return
+
+    blob_path = settings.raw_blob_path("datasets/synthetic_phishing_data.csv")
+    uploaded = blob_storage.upload_file(local_path, blob_path, overwrite=True)
+    if uploaded:
+        print(f"Uploaded synthetic dataset to blob path: {blob_path}")
+
+
+upload_synthetic_dataset(output_path)

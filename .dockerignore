@@ -1,0 +1,17 @@
+.git/
+.github/
+.venv/
+.pytest_cache/
+node_modules/
+frontend-dashboard/node_modules/
+frontend-dashboard/dist/
+logs/
+notebooks/
+reports/
+tests/
+docs/
+agent-response.md
+data/raw/
+data/external/
+data/processed/*
+!data/processed/processed_cyber_data.csv
