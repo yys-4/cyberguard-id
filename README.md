@@ -297,6 +297,18 @@ Channel prior guardrails:
 - Output reasoning membantu investigasi, tetapi bukan kebenaran absolut.
 - Untuk `uncertainty_flag=true`, lakukan verifikasi manual tambahan sebelum tindakan final.
 
+## Dokumen Kompetisi
+
+Dokumen berikut disiapkan untuk kebutuhan review juri dan validasi metodologi:
+
+- `reports/competition/Project Brief - Datathon.md`
+- `reports/competition/policy_brief_juri.md`
+- `reports/competition/model_evaluation_report.md`
+- `reports/competition/overall_metrics.csv`
+- `reports/competition/confusion_matrix.csv`
+- `reports/competition/segment_metrics.csv`
+- `notebooks/eda_competition_readiness.ipynb`
+
 ## Status Produk
 
 CyberGuard-ID saat ini siap untuk:
