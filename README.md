@@ -76,7 +76,6 @@ Endpoint utama:
 
 ## Frontend Dashboard (React + Vite)
 
-Jika tim ingin iterasi UI terpisah dari FastAPI:
 
 ```bash
 cd frontend-dashboard
@@ -91,13 +90,6 @@ Catatan:
 
 - Pastikan backend aktif di `http://localhost:8000`.
 - Set `VITE_API_BASE_URL` di file `.env` frontend.
-
-## Deploy Ke Azure
-
-Panduan deploy awal ke Azure tersedia di:
-
-- `docs/azure-deployment-guide.md`
-- `docs/azure-security-mlops-guide.md`
 
 ## Dev Workflow Tanpa Bentrok Port
 
