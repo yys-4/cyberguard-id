@@ -15,3 +15,5 @@ data/raw/
 data/external/
 data/processed/*
 !data/processed/processed_cyber_data.csv
+# Phase 3.5: only production model needed at runtime
+models/xgboost_baseline.joblib

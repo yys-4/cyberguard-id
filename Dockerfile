@@ -1,5 +1,5 @@
 # Stage 1: builder image
-FROM python:3.9-slim AS builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /build
 
@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: runtime image
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -36,6 +36,14 @@ RUN mkdir -p logs && chown -R appuser:appuser logs
 USER appuser
 
 EXPOSE 8000
+
+# OCI standard image labels for traceability
+LABEL org.opencontainers.image.source="https://github.com/muhammadmikailziyad/cyberguard-id"
+LABEL org.opencontainers.image.description="CyberGuard-ID phishing detection API"
+
+# Phase 3.5: stdlib healthcheck — no curl dependency needed
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD python -c "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health/live').getcode() == 200 else 1)"
 
 # Start FastAPI app
 CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000"]

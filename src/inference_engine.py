@@ -457,8 +457,9 @@ def extract_inference_features(text: str) -> Dict[str, List[Any]]:
 
 
 class HybridThreatAnalyzer:
-    def __init__(self, model_path: str, logger: Optional[logging.Logger] = None):
+    def __init__(self, model_path: str, logger: Optional[logging.Logger] = None, blob_storage: Optional[Any] = None) -> None:
         self.logger = logger or logging.getLogger(__name__)
+        self.blob_storage = blob_storage  # Phase 2.2: Blob-backed calibrator sync
         self.model = joblib.load(model_path)
 
         self.preprocessor = getattr(self.model, "named_steps", {}).get("preprocessor")
@@ -541,12 +542,32 @@ class HybridThreatAnalyzer:
         self.logger.info("Confidence calibration is active (%s).", self.calibration_method)
 
     def _load_calibrator_from_disk(self) -> bool:
+        """
+        Phase 2.2: Check Blob Storage first, then local disk.
+        On Blob hit, write locally for subsequent cold-start latency reduction.
+        """
+        # 1. Try Blob Storage (fast path for Container Apps cold starts)
+        if self.blob_storage and getattr(self.blob_storage, "enabled", False):
+            blob_path = "processed/models/probability_calibrator.joblib"
+            try:
+                os.makedirs(os.path.dirname(self.calibrator_path) or ".", exist_ok=True)
+                downloaded = self.blob_storage.download_file(
+                    blob_path=blob_path,
+                    local_path=self.calibrator_path,
+                    overwrite=True,
+                )
+                if downloaded:
+                    self.logger.info("Loaded probability calibrator from Blob Storage: %s", blob_path)
+            except Exception as exc:  # pragma: no cover
+                self.logger.warning("Blob calibrator download failed, falling back to local: %s", exc)
+
+        # 2. Try local disk (either pre-existing or just downloaded from Blob)
         if not self.calibrator_path or not os.path.exists(self.calibrator_path):
             return False
 
         try:
             payload = joblib.load(self.calibrator_path)
-        except Exception as exc:  # pragma: no cover - filesystem dependent
+        except Exception as exc:  # pragma: no cover
             self.logger.warning("Failed to load calibrator from %s: %s", self.calibrator_path, exc)
             return False
 
@@ -563,7 +584,7 @@ class HybridThreatAnalyzer:
         self._probability_calibrator = calibrator
         self.calibration_method = method
         self.calibration_applied = True
-        self.logger.info("Loaded probability calibrator from %s", self.calibrator_path)
+        self.logger.info("Loaded probability calibrator from local disk: %s", self.calibrator_path)
         return True
 
     def _persist_calibrator_to_disk(self) -> None:
@@ -578,6 +599,19 @@ class HybridThreatAnalyzer:
             joblib.dump(payload, self.calibrator_path)
         except Exception as exc:  # pragma: no cover - filesystem dependent
             self.logger.warning("Failed to persist calibrator: %s", exc)
+            return
+
+        # Phase 2.2: upload to Blob Storage after successful local persist
+        if self.blob_storage and getattr(self.blob_storage, "enabled", False):
+            try:
+                self.blob_storage.upload_file(
+                    local_path=self.calibrator_path,
+                    blob_path="processed/models/probability_calibrator.joblib",
+                    overwrite=True,
+                )
+                self.logger.info("Calibrator uploaded to Blob Storage.")
+            except Exception as exc:  # pragma: no cover
+                self.logger.warning("Failed to upload calibrator to Blob: %s", exc)
 
     def _apply_calibration(self, raw_probability: float) -> float:
         bounded_raw = _clip_probability(raw_probability)

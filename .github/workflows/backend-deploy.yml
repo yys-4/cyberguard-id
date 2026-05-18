@@ -1,0 +1,74 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "models/**"
+      - "requirements.txt"
+      - "Dockerfile"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false  # Never cancel an in-flight deploy
+
+jobs:
+  deploy:
+    name: Build & Deploy to Azure Container Apps
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Only deploy when backend-ci passes (uses GitHub required status checks)
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login via service principal
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and push image to ACR (SHA-tagged)
+        run: |
+          az acr build \
+            --registry "${{ secrets.ACR_NAME }}" \
+            --image "cyberguard-api:${{ github.sha }}" \
+            .
+
+      - name: Update Container App to new image revision
+        run: |
+          az containerapp update \
+            --name "${{ secrets.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ secrets.RESOURCE_GROUP }}" \
+            --image "${{ secrets.ACR_NAME }}.azurecr.io/cyberguard-api:${{ github.sha }}"
+
+      - name: Smoke test deployment
+        run: |
+          APP_FQDN=$(az containerapp show \
+            --name "${{ secrets.CONTAINER_APP_NAME }}" \
+            --resource-group "${{ secrets.RESOURCE_GROUP }}" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          echo "Smoke testing https://$APP_FQDN/health/live ..."
+          for i in {1..20}; do
+            if curl -fsS "https://$APP_FQDN/health/live" > /dev/null 2>&1; then
+              echo "Health check passed."
+              exit 0
+            fi
+            echo "Attempt $i: not ready yet, waiting 15s..."
+            sleep 15
+          done
+          echo "ERROR: Deployment health check timed out."
+          exit 1
+
+      - name: Tag ACR image as latest on success
+        if: success()
+        run: |
+          az acr import \
+            --name "${{ secrets.ACR_NAME }}" \
+            --source "${{ secrets.ACR_NAME }}.azurecr.io/cyberguard-api:${{ github.sha }}" \
+            --image "cyberguard-api:latest" \
+            --force || true

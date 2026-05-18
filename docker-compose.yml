@@ -11,14 +11,10 @@ services:
     volumes:
       - ./logs:/app/logs
     environment:
-      # Placeholder secrets for object storage integration
-      - SPACES_KEY=your_do_spaces_key
-      - SPACES_SECRET=your_do_spaces_secret
-      - SPACES_URL=your_do_spaces_url
-      - SPACES_BUCKET=your_do_spaces_bucket
       # Inference hardening config
       - ENABLE_CONFIDENCE_CALIBRATION=true
-      - PERSIST_CALIBRATOR=false
+      # Phase 1.2: persist calibrator to disk so it survives container restarts
+      - PERSIST_CALIBRATOR=true
       - CALIBRATION_DATA_PATH=/app/data/processed/processed_cyber_data.csv
       - CALIBRATOR_PATH=/app/models/probability_calibrator.joblib
       - DEFAULT_SENSITIVITY=balanced
@@ -36,6 +32,8 @@ services:
       - CHANNEL_PRIOR_MIN_SAMPLE=200
       - CHANNEL_PRIOR_SMOOTHING=200.0
       - CHANNEL_PRIOR_MAX_ODDS_RATIO=3.0
+      # Phase 1.1: explicit CORS origin for local dev
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173
 
     # Keep container healthy when liveness endpoint is reachable
     healthcheck:

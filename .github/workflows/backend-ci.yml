@@ -1,0 +1,101 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "requirements.txt"
+      - "Dockerfile"
+      - "mypy.ini"
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "requirements.txt"
+      - "Dockerfile"
+      - "mypy.ini"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-type-check:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Ruff — lint
+        run: ruff check src/ tests/
+
+      - name: Ruff — format check
+        run: ruff format --check src/ tests/
+
+      - name: Mypy — type safety
+        run: mypy src/ --ignore-missing-imports
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Bandit — SAST
+        run: bandit -r src/ -ll
+
+      - name: pip-audit — CVE scan
+        run: pip-audit -r requirements.txt
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint-and-type-check]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Pytest with coverage
+        run: pytest tests/ -q --cov=src --cov-fail-under=70
+        env:
+          # Minimal env so Azure SDK degrades gracefully in CI
+          APP_ENV: test
+          ENABLE_CONFIDENCE_CALIBRATION: "true"
+          PERSIST_CALIBRATOR: "false"
+          CALIBRATION_DATA_PATH: data/processed/processed_cyber_data.csv
+          CALIBRATOR_PATH: models/probability_calibrator.joblib
+          DEFAULT_SENSITIVITY: balanced
+          CORS_ALLOWED_ORIGINS: "http://localhost:5173"

@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+  id-token: write  # Required for Azure Static Web Apps OIDC auth
+
 jobs:
   frontend-audit-build:
     name: Frontend Audit and Build
@@ -32,3 +36,17 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+        env:
+          # Phase 3.1: API base URL is the Container Apps FQDN (set in repo variable)
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+
+      # Phase 3.1: Deploy built dist/ to Azure Static Web Apps (Free SKU)
+      - name: Deploy to Azure Static Web Apps
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: frontend-dashboard/dist
+          skip_app_build: true  # Already built above

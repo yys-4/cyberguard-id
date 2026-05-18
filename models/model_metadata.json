@@ -1,0 +1,11 @@
+{
+  "model_version": "v1.20260518",
+  "trained_at": "2026-05-18T07:34:45.809421+00:00",
+  "metrics": {
+    "test_f1": 0.9568,
+    "test_precision": 0.937,
+    "test_recall": 0.9775
+  },
+  "git_commit": "ae37a74",
+  "ci_run_id": "local"
+}
