@@ -1,19 +1,62 @@
+# === Virtual Environment ===
 .venv/
-pycache/
-.pytest_cache/
+venv/
+env/
+
+# === Python ===
+__pycache__/
 *.py[cod]
-logs/
-*.log
-.ipynb_checkpoints/
-.DS_Store
-.vscode/
-.env
+*.pyo
+*.egg-info/
+*.egg
 dist/
 build/
+*.so
+
+# === Testing ===
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# === AI Assistant Configs (local) ===
+CLAUDE.md
+AGENTS.md
+.claude/
+.kilo/
+.agents/
+agent-response.md
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Environment / Secrets ===
 .env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# === Logs ===
+logs/
+*.log
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+# === Node (frontend) ===
 frontend-dashboard/node_modules/
 frontend-dashboard/dist/
-agent-response.md
-scripts/azure
+
+# === Competition Brief (local) ===
 reports/competition/Project Brief - Datathon.md
-docs
+scripts/azure/
+docs/
