@@ -1,0 +1,38 @@
+{
+  "id": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.KeyVault/vaults/kv-cyberguard-id-0428",
+  "location": "southeastasia",
+  "name": "kv-cyberguard-id-0428",
+  "properties": {
+    "accessPolicies": [],
+    "createMode": null,
+    "enablePurgeProtection": null,
+    "enableRbacAuthorization": true,
+    "enableSoftDelete": true,
+    "enabledForDeployment": false,
+    "enabledForDiskEncryption": false,
+    "enabledForTemplateDeployment": false,
+    "hsmPoolResourceId": null,
+    "networkAcls": null,
+    "privateEndpointConnections": null,
+    "provisioningState": "Succeeded",
+    "publicNetworkAccess": "Enabled",
+    "sku": {
+      "family": "A",
+      "name": "standard"
+    },
+    "softDeleteRetentionInDays": 90,
+    "tenantId": "4b877fd1-a56d-4438-a1fc-4022deef2166",
+    "vaultUri": "https://kv-cyberguard-id-0428.vault.azure.net/"
+  },
+  "resourceGroup": "rg-cyberguard-id",
+  "systemData": {
+    "createdAt": "2026-04-17T04:17:36.014000+00:00",
+    "createdBy": "muhammadayyas1003@gmail.com",
+    "createdByType": "User",
+    "lastModifiedAt": "2026-04-17T04:17:36.014000+00:00",
+    "lastModifiedBy": "muhammadayyas1003@gmail.com",
+    "lastModifiedByType": "User"
+  },
+  "tags": {},
+  "type": "Microsoft.KeyVault/vaults"
+}

@@ -1,0 +1,48 @@
+name: Azure Daily Cost Check
+
+on:
+  schedule:
+    - cron: "30 0 * * *" # Daily 00:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  daily-cost:
+    name: Daily Cost Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Run daily Azure cost check
+        env:
+          SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          RESOURCE_GROUP: rg-cyberguard-id
+          BUDGET_NAME: cyberguard-monthly-guardrail
+          REPORT_PATH: reports/azure-cost/daily-cost-${{ github.run_id }}.md
+        run: |
+          chmod +x scripts/azure/daily_cost_check.sh
+          scripts/azure/daily_cost_check.sh
+
+      - name: Upload cost report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-daily-cost-report-${{ github.run_id }}
+          path: reports/azure-cost/
+          if-no-files-found: error
+
+      - name: Append report to workflow summary
+        run: |
+          cat reports/azure-cost/daily-cost-${{ github.run_id }}.md >> "$GITHUB_STEP_SUMMARY"

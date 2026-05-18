@@ -1,0 +1,11 @@
+{
+  "id": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id",
+  "location": "southeastasia",
+  "managedBy": null,
+  "name": "rg-cyberguard-id",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}

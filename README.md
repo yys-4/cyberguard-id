@@ -99,6 +99,13 @@ Panduan deploy awal ke Azure tersedia di:
 - `docs/azure-deployment-guide.md`
 - `docs/azure-security-mlops-guide.md`
 
+Shortcut script operasional Azure:
+
+- `bash scripts/azure/resume_environment.sh` (mode demo/aktif)
+- `bash scripts/azure/apply_min_cost_mode.sh` (mode hemat aktif)
+- `bash scripts/azure/daily_cost_check.sh` (cek biaya harian)
+- `bash scripts/azure/hibernate_environment.sh` (mode idle ekstrem)
+
 ## Dev Workflow Tanpa Bentrok Port
 
 ### Jalankan Backend + Frontend Sekaligus
@@ -301,20 +308,7 @@ Channel prior guardrails:
 
 Dokumen berikut disiapkan untuk kebutuhan review juri dan validasi metodologi:
 
-- `reports/competition/Project Brief - Datathon.md`
-- `reports/competition/policy_brief_juri.md`
-- `reports/competition/model_evaluation_report.md`
 - `reports/competition/overall_metrics.csv`
 - `reports/competition/confusion_matrix.csv`
 - `reports/competition/segment_metrics.csv`
-- `notebooks/eda_competition_readiness.ipynb`
-
-## Status Produk
-
-CyberGuard-ID saat ini siap untuk:
-
-- demo produk,
-- integrasi internal,
-- baseline production pilot dengan observability dasar.
-
-Untuk scale production penuh, disarankan menambahkan monitoring metrik model, drift detection, dan audit log pipeline.
+- `notebooks/process_eda.ipynb`

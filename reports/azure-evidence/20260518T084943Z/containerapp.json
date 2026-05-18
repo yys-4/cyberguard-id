@@ -1,0 +1,402 @@
+{
+  "id": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.App/containerapps/ca-cyberguard-api",
+  "identity": {
+    "principalId": "1ffd0944-c05b-4154-84e9-6c19ccd5e933",
+    "tenantId": "4b877fd1-a56d-4438-a1fc-4022deef2166",
+    "type": "SystemAssigned"
+  },
+  "location": "Southeast Asia",
+  "name": "ca-cyberguard-api",
+  "properties": {
+    "configuration": {
+      "activeRevisionsMode": "Single",
+      "dapr": null,
+      "identitySettings": [],
+      "ingress": {
+        "additionalPortMappings": null,
+        "allowInsecure": false,
+        "clientCertificateMode": null,
+        "corsPolicy": null,
+        "customDomains": null,
+        "exposedPort": 0,
+        "external": true,
+        "fqdn": "ca-cyberguard-api.yellowsmoke-03e98b35.southeastasia.azurecontainerapps.io",
+        "ipSecurityRestrictions": null,
+        "stickySessions": null,
+        "targetPort": 8000,
+        "targetPortHttpScheme": null,
+        "traffic": [
+          {
+            "latestRevision": true,
+            "weight": 100
+          }
+        ],
+        "transport": "Auto"
+      },
+      "maxInactiveRevisions": 100,
+      "registries": [
+        {
+          "identity": "",
+          "passwordSecretRef": "acrcyberguardid2166azurecrio-acrcyberguardid2166",
+          "server": "acrcyberguardid2166.azurecr.io",
+          "username": "acrcyberguardid2166"
+        }
+      ],
+      "revisionTransitionThreshold": null,
+      "runtime": null,
+      "secrets": [
+        {
+          "name": "acrcyberguardid2166azurecrio-acrcyberguardid2166"
+        }
+      ],
+      "service": null,
+      "targetLabel": ""
+    },
+    "customDomainVerificationId": "3988325DA34EC8292DC0F8B3257439BB43E6256E8B73413F375FD71787C6CED4",
+    "delegatedIdentities": [],
+    "environmentId": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.App/managedEnvironments/cae-cyberguard-id",
+    "eventStreamEndpoint": "https://southeastasia.azurecontainerapps.dev/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/containerApps/ca-cyberguard-api/eventstream",
+    "latestReadyRevisionName": "ca-cyberguard-api--0000001",
+    "latestRevisionFqdn": "ca-cyberguard-api--0000001.yellowsmoke-03e98b35.southeastasia.azurecontainerapps.io",
+    "latestRevisionName": "ca-cyberguard-api--0000001",
+    "managedEnvironmentId": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.App/managedEnvironments/cae-cyberguard-id",
+    "outboundIpAddresses": [
+      "20.205.150.1",
+      "20.205.150.0",
+      "20.205.150.18",
+      "20.205.149.225",
+      "20.247.245.155",
+      "20.247.245.157",
+      "20.247.245.153",
+      "20.247.245.143",
+      "20.247.246.7",
+      "20.247.246.1",
+      "4.144.198.126",
+      "135.171.164.162",
+      "57.155.85.16",
+      "4.145.26.116",
+      "135.171.218.166",
+      "4.144.176.1",
+      "57.158.172.75",
+      "52.230.52.158",
+      "57.155.21.1",
+      "52.230.52.238",
+      "20.195.106.24",
+      "57.158.172.49",
+      "20.247.241.107",
+      "4.144.196.173",
+      "57.155.222.3",
+      "20.6.2.239",
+      "57.155.85.23",
+      "20.198.186.233",
+      "135.171.177.155",
+      "104.43.99.132",
+      "40.65.175.184",
+      "23.98.127.141",
+      "135.171.44.136",
+      "4.144.199.147",
+      "20.24.160.6",
+      "57.155.21.29",
+      "135.171.21.87",
+      "52.230.53.44",
+      "57.155.85.45",
+      "135.171.194.33",
+      "104.43.99.167",
+      "57.155.222.5",
+      "135.171.201.97",
+      "4.144.160.249",
+      "20.44.240.14",
+      "20.247.169.50",
+      "52.253.86.165",
+      "4.145.28.175",
+      "135.171.164.170",
+      "104.43.99.135",
+      "135.171.194.11",
+      "20.247.188.205",
+      "20.198.207.101",
+      "135.171.194.41",
+      "20.198.207.47",
+      "135.171.218.160",
+      "20.24.165.225",
+      "57.155.222.11",
+      "20.247.196.116",
+      "57.155.85.50",
+      "23.98.125.21",
+      "135.171.44.186",
+      "135.171.45.8",
+      "57.155.222.17",
+      "52.230.53.33",
+      "4.144.199.149",
+      "20.247.160.101",
+      "52.139.255.6",
+      "4.144.199.146",
+      "52.253.87.12",
+      "135.171.201.191",
+      "20.44.249.181",
+      "20.247.196.108",
+      "20.24.166.188",
+      "135.171.201.6",
+      "40.119.236.13",
+      "135.171.201.31",
+      "52.253.87.108",
+      "57.158.172.76",
+      "4.144.199.170",
+      "20.6.114.5",
+      "4.144.194.224",
+      "135.171.20.58",
+      "57.158.128.114",
+      "20.198.192.118",
+      "20.6.65.200",
+      "172.188.250.166",
+      "4.145.180.29",
+      "20.205.243.128",
+      "135.171.228.121",
+      "20.6.122.234",
+      "57.155.21.38",
+      "20.247.161.23",
+      "4.144.152.12",
+      "4.144.152.13",
+      "4.144.236.7",
+      "20.44.249.198",
+      "20.6.122.164",
+      "52.230.53.48",
+      "4.144.158.251",
+      "20.198.128.121",
+      "20.198.128.186",
+      "20.198.128.64",
+      "20.198.128.69",
+      "20.247.207.65",
+      "20.247.207.75",
+      "20.247.207.73",
+      "20.247.207.76",
+      "20.247.207.60",
+      "20.247.207.71",
+      "135.171.22.167",
+      "20.6.2.247",
+      "20.6.122.238",
+      "52.230.53.122",
+      "20.247.221.232",
+      "135.171.164.200",
+      "20.247.196.159",
+      "4.145.127.221",
+      "20.6.2.243",
+      "20.247.241.144",
+      "57.155.48.15",
+      "20.247.228.81",
+      "20.247.221.237",
+      "20.247.206.74",
+      "4.144.161.92",
+      "135.171.202.5",
+      "20.247.196.166",
+      "57.155.222.25",
+      "40.119.233.161",
+      "4.145.127.234",
+      "20.44.249.201",
+      "20.247.228.3",
+      "57.155.72.59",
+      "135.171.218.168",
+      "20.247.196.163",
+      "104.43.99.205",
+      "4.144.161.104",
+      "20.198.190.119",
+      "20.247.226.251",
+      "104.43.99.203",
+      "4.144.249.64",
+      "4.145.29.76",
+      "20.247.169.163",
+      "4.144.161.44",
+      "20.247.211.226",
+      "20.195.16.122",
+      "4.144.161.63",
+      "20.247.241.149",
+      "57.155.222.23",
+      "52.139.255.59",
+      "135.171.22.175",
+      "20.44.200.61",
+      "20.44.200.60",
+      "135.171.194.89",
+      "20.247.169.135",
+      "52.230.54.120",
+      "4.144.236.15",
+      "135.171.201.251",
+      "4.144.161.12",
+      "52.253.87.167",
+      "20.247.241.162",
+      "172.188.192.220",
+      "4.144.199.177",
+      "135.171.201.223",
+      "20.247.221.234",
+      "20.247.189.25",
+      "135.171.194.65",
+      "20.247.225.132",
+      "57.155.62.95",
+      "20.44.242.27",
+      "4.145.28.125",
+      "135.171.22.172",
+      "4.145.127.174",
+      "57.155.21.74",
+      "4.144.225.52",
+      "20.6.122.236",
+      "52.148.116.187",
+      "135.171.201.214",
+      "20.6.2.255",
+      "20.212.129.248",
+      "20.247.240.176"
+    ],
+    "patchingMode": "Automatic",
+    "provisioningState": "Succeeded",
+    "runningStatus": "Running",
+    "template": {
+      "containers": [
+        {
+          "env": [
+            {
+              "name": "ENABLE_CONFIDENCE_CALIBRATION",
+              "value": "true"
+            },
+            {
+              "name": "PERSIST_CALIBRATOR",
+              "value": "false"
+            },
+            {
+              "name": "CALIBRATION_DATA_PATH",
+              "value": "/app/data/processed/processed_cyber_data.csv"
+            },
+            {
+              "name": "CALIBRATOR_PATH",
+              "value": "/app/models/probability_calibrator.joblib"
+            },
+            {
+              "name": "DEFAULT_SENSITIVITY",
+              "value": "balanced"
+            },
+            {
+              "name": "THRESHOLD_LOW",
+              "value": "0.75"
+            },
+            {
+              "name": "THRESHOLD_BALANCED",
+              "value": "0.60"
+            },
+            {
+              "name": "THRESHOLD_HIGH",
+              "value": "0.45"
+            },
+            {
+              "name": "THRESHOLD_UNCERTAINTY_MARGIN",
+              "value": "0.05"
+            },
+            {
+              "name": "AUTO_SENSITIVITY_SMS",
+              "value": "low"
+            },
+            {
+              "name": "AUTO_SENSITIVITY_WHATSAPP",
+              "value": "balanced"
+            },
+            {
+              "name": "AUTO_SENSITIVITY_EMAIL",
+              "value": "balanced"
+            },
+            {
+              "name": "THRESHOLD_OFFSET_SMS",
+              "value": "0.00"
+            },
+            {
+              "name": "THRESHOLD_OFFSET_WHATSAPP",
+              "value": "0.00"
+            },
+            {
+              "name": "THRESHOLD_OFFSET_EMAIL",
+              "value": "0.00"
+            },
+            {
+              "name": "CHANNEL_PRIOR_WEIGHT",
+              "value": "1.00"
+            },
+            {
+              "name": "CHANNEL_PRIOR_MIN_SAMPLE",
+              "value": "200"
+            },
+            {
+              "name": "CHANNEL_PRIOR_SMOOTHING",
+              "value": "200.0"
+            },
+            {
+              "name": "CHANNEL_PRIOR_MAX_ODDS_RATIO",
+              "value": "3.0"
+            },
+            {
+              "name": "APP_ENV",
+              "value": "prod"
+            },
+            {
+              "name": "AZURE_KEY_VAULT_URL",
+              "value": "https://kv-cyberguard-id-0428.vault.azure.net/"
+            },
+            {
+              "name": "AZURE_STORAGE_ACCOUNT_URL",
+              "value": "https://stcyberguardid0428.blob.core.windows.net"
+            },
+            {
+              "name": "AZURE_STORAGE_CONTAINER",
+              "value": "cyberguard-data"
+            },
+            {
+              "name": "KV_SECRET_STORAGE_CONNECTION_STRING",
+              "value": "cyberguard-storage-connstr"
+            },
+            {
+              "name": "BLOB_PREDICTION_LOGGING_ENABLED",
+              "value": "true"
+            },
+            {
+              "name": "BLOB_RAW_PREFIX",
+              "value": "raw"
+            },
+            {
+              "name": "BLOB_PROCESSED_PREFIX",
+              "value": "processed"
+            },
+            {
+              "name": "BLOB_LOGS_PREFIX",
+              "value": "logs"
+            }
+          ],
+          "image": "acrcyberguardid2166.azurecr.io/cyberguard-api:v2sec1",
+          "imageType": "ContainerImage",
+          "name": "ca-cyberguard-api",
+          "resources": {
+            "cpu": 0.5,
+            "ephemeralStorage": "2Gi",
+            "memory": "1Gi"
+          }
+        }
+      ],
+      "customMetricsSettings": null,
+      "initContainers": null,
+      "revisionSuffix": "",
+      "scale": {
+        "cooldownPeriod": 300,
+        "maxReplicas": 1,
+        "minReplicas": 0,
+        "pollingInterval": 30,
+        "rules": null
+      },
+      "serviceBinds": null,
+      "terminationGracePeriodSeconds": null,
+      "volumes": null
+    },
+    "workloadProfileName": "Consumption"
+  },
+  "resourceGroup": "rg-cyberguard-id",
+  "systemData": {
+    "createdAt": "2026-04-17T02:16:28.6074139",
+    "createdBy": "muhammadayyas1003@gmail.com",
+    "createdByType": "User",
+    "lastModifiedAt": "2026-05-18T08:48:38.8504966",
+    "lastModifiedBy": "muhammadayyas1003@gmail.com",
+    "lastModifiedByType": "User"
+  },
+  "type": "Microsoft.App/containerApps"
+}

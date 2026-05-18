@@ -1,0 +1,99 @@
+{
+  "accessTier": "Hot",
+  "accountMigrationInProgress": null,
+  "allowBlobPublicAccess": false,
+  "allowCrossTenantReplication": false,
+  "allowSharedKeyAccess": null,
+  "allowedCopyScope": null,
+  "azureFilesIdentityBasedAuthentication": null,
+  "blobRestoreStatus": null,
+  "creationTime": "2026-04-17T04:13:37.107978+00:00",
+  "customDomain": null,
+  "defaultToOAuthAuthentication": null,
+  "dnsEndpointType": null,
+  "dualStackEndpointPreference": null,
+  "enableExtendedGroups": null,
+  "enableHttpsTrafficOnly": true,
+  "enableNfsV3": null,
+  "encryption": {
+    "encryptionIdentity": null,
+    "keySource": "Microsoft.Storage",
+    "keyVaultProperties": null,
+    "requireInfrastructureEncryption": null,
+    "services": {
+      "blob": {
+        "enabled": true,
+        "keyType": "Account",
+        "lastEnabledTime": "2026-04-17T04:13:37.257312+00:00"
+      },
+      "file": {
+        "enabled": true,
+        "keyType": "Account",
+        "lastEnabledTime": "2026-04-17T04:13:37.257312+00:00"
+      },
+      "queue": null,
+      "table": null
+    }
+  },
+  "extendedLocation": null,
+  "failoverInProgress": null,
+  "geoPriorityReplicationStatus": null,
+  "geoReplicationStats": null,
+  "id": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.Storage/storageAccounts/stcyberguardid0428",
+  "identity": null,
+  "immutableStorageWithVersioning": null,
+  "isHnsEnabled": null,
+  "isLocalUserEnabled": null,
+  "isSftpEnabled": null,
+  "isSkuConversionBlocked": null,
+  "keyCreationTime": {
+    "key1": "2026-04-17T04:13:37.247630+00:00",
+    "key2": "2026-04-17T04:13:37.247630+00:00"
+  },
+  "keyPolicy": null,
+  "kind": "StorageV2",
+  "largeFileSharesState": null,
+  "lastGeoFailoverTime": null,
+  "location": "southeastasia",
+  "minimumTlsVersion": "TLS1_2",
+  "name": "stcyberguardid0428",
+  "networkRuleSet": {
+    "bypass": "AzureServices",
+    "defaultAction": "Allow",
+    "ipRules": [],
+    "ipv6Rules": [],
+    "resourceAccessRules": null,
+    "virtualNetworkRules": []
+  },
+  "placement": null,
+  "primaryEndpoints": {
+    "blob": "https://stcyberguardid0428.blob.core.windows.net/",
+    "dfs": "https://stcyberguardid0428.dfs.core.windows.net/",
+    "file": "https://stcyberguardid0428.file.core.windows.net/",
+    "internetEndpoints": null,
+    "ipv6Endpoints": null,
+    "microsoftEndpoints": null,
+    "queue": "https://stcyberguardid0428.queue.core.windows.net/",
+    "table": "https://stcyberguardid0428.table.core.windows.net/",
+    "web": "https://stcyberguardid0428.z23.web.core.windows.net/"
+  },
+  "primaryLocation": "southeastasia",
+  "privateEndpointConnections": [],
+  "provisioningState": "Succeeded",
+  "publicNetworkAccess": null,
+  "resourceGroup": "rg-cyberguard-id",
+  "routingPreference": null,
+  "sasPolicy": null,
+  "secondaryEndpoints": null,
+  "secondaryLocation": null,
+  "sku": {
+    "name": "Standard_LRS",
+    "tier": "Standard"
+  },
+  "statusOfPrimary": "available",
+  "statusOfSecondary": null,
+  "storageAccountSkuConversionStatus": null,
+  "tags": {},
+  "type": "Microsoft.Storage/storageAccounts",
+  "zones": null
+}

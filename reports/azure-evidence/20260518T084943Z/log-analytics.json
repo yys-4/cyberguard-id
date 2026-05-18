@@ -1,0 +1,29 @@
+{
+  "createdDate": "2026-04-17T02:13:29.4348982Z",
+  "customerId": "13dc093e-73c3-4339-b1fd-0969a806fa03",
+  "etag": "\"9e018b8a-0000-1800-0000-6a0ad2770000\"",
+  "features": {
+    "enableLogAccessUsingOnlyResourcePermissions": true,
+    "legacy": 0,
+    "searchVersion": 1
+  },
+  "id": "/subscriptions/1aa5688f-8a54-4118-b26e-fd4bf7187c76/resourceGroups/rg-cyberguard-id/providers/Microsoft.OperationalInsights/workspaces/log-cyberguard-id",
+  "location": "southeastasia",
+  "modifiedDate": "2026-05-18T08:48:55.6081682Z",
+  "name": "log-cyberguard-id",
+  "provisioningState": "Succeeded",
+  "publicNetworkAccessForIngestion": "Enabled",
+  "publicNetworkAccessForQuery": "Enabled",
+  "resourceGroup": "rg-cyberguard-id",
+  "retentionInDays": 30,
+  "sku": {
+    "lastSkuUpdate": "2026-04-17T02:13:29.4348982Z",
+    "name": "PerGB2018"
+  },
+  "type": "Microsoft.OperationalInsights/workspaces",
+  "workspaceCapping": {
+    "dailyQuotaGb": -1.0,
+    "dataIngestionStatus": "RespectQuota",
+    "quotaNextResetTime": "2026-05-18T20:00:00Z"
+  }
+}
